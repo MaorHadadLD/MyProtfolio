@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { motion, useInView, AnimatePresence } from "framer-motion";
+import { useRef, useState } from "react";
 
 const projects = [
   {
@@ -9,9 +9,10 @@ const projects = [
     name: "Smart Hotel System",
     shortName: "SHS",
     description:
-      "A comprehensive smart hotel management platform. Guests can control room features, request services, and check in/out digitally. Staff manages operations from a real-time dashboard.",
+      "A comprehensive smart hotel management platform. Guests can control room features, request services, and check in/out digitally.",
     tags: ["React Native", "Node.js", "Firebase", "IoT"],
-    link: "https://github.com/MaorHadadLD/SHS-SmartHotel",
+    video:
+      "https://drive.google.com/file/d/1m3FItDY1wmsESxfWclD3FtX1xWFvgfMu/preview",
     accent: "#00f5ff",
     icon: "🏨",
     highlights: ["Real-time dashboard", "Digital check-in/out", "IoT integration"],
@@ -21,9 +22,9 @@ const projects = [
     name: "Garber Woodworks",
     shortName: "GW",
     description:
-      "Professional homepage for a woodworking business. Clean, conversion-focused design showcasing craftsmanship with portfolio gallery and contact flow.",
+      "Professional homepage for a woodworking business. Clean, conversion-focused design.",
     tags: ["Next.js", "Tailwind CSS", "React"],
-    link: "https://garberwoodworks.com", // 🔥 האתר שלך
+    link: "https://garberwoodworks.com",
     accent: "#a855f7",
     icon: "🪵",
     highlights: ["Business landing page", "Portfolio gallery", "Responsive design"],
@@ -32,95 +33,105 @@ const projects = [
 
 export default function Projects() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const isInView = useInView(ref, { once: true });
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+
+  const handleClick = (project: any) => {
+    if (project.video) {
+      setSelectedVideo(project.video);
+    } else if (project.link) {
+      window.open(project.link, "_blank");
+    }
+  };
 
   return (
-    <section id="projects" className="py-24 lg:py-32 relative overflow-hidden">
+    <section className="py-24">
       <div className="max-w-6xl mx-auto px-6" ref={ref}>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="mb-16"
-        >
-          <h2 className="text-4xl lg:text-5xl font-bold">
-            Things I&apos;ve{" "}
-            <span className="text-neon-cyan glow-cyan">built</span>
-          </h2>
-        </motion.div>
+        <h2 className="text-4xl font-bold mb-12">
+          Things I&apos;ve built
+        </h2>
 
         <div className="grid md:grid-cols-2 gap-6">
           {projects.map((project, index) => (
-            <motion.a
+            <motion.div
               key={project.id}
-              href={project.link}
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={() => handleClick(project)}
               initial={{ opacity: 0, y: 40 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: index * 0.2 }}
-              whileHover={{ y: -6, scale: 1.01 }}
-              className="group card-glass rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 block"
-              style={{
-                borderColor: `${project.accent}15`,
-              }}
+              transition={{ delay: index * 0.2 }}
+              whileHover={{ y: -6, scale: 1.02 }}
+              className="cursor-pointer rounded-2xl p-6 bg-white/5 border border-white/10 backdrop-blur-lg"
             >
-              {/* Accent bar */}
-              <div
-                className="h-1 w-full"
-                style={{
-                  background: `linear-gradient(90deg, ${project.accent}60, transparent)`,
-                }}
-              />
-
-              <div className="p-6 lg:p-8">
-                {/* Header */}
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-3xl">{project.icon}</span>
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-100 group-hover:text-white transition-colors">
-                      {project.name}
-                    </h3>
-                    <span
-                      className="text-xs font-mono"
-                      style={{ color: project.accent }}
-                    >
-                      /{project.shortName.toLowerCase()}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Description */}
-                <p className="text-slate-400 text-sm leading-relaxed mb-5">
-                  {project.description}
-                </p>
-
-                {/* Highlights */}
-                <div className="flex flex-col gap-1.5 mb-5">
-                  {project.highlights.map((h) => (
-                    <div key={h} className="flex items-center gap-2 text-xs text-slate-500">
-                      <span style={{ color: project.accent }}>▸</span>
-                      {h}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Tags */}
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-xs px-2.5 py-1 rounded-md font-mono text-slate-500 border border-white/5 bg-white/3"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-3xl">{project.icon}</span>
+                <div>
+                  <h3 className="font-bold">{project.name}</h3>
+                  <span className="text-xs text-gray-400">
+                    /{project.shortName}
+                  </span>
                 </div>
               </div>
-            </motion.a>
+
+              <p className="text-sm text-gray-400 mb-4">
+                {project.description}
+              </p>
+
+              <div className="text-xs text-gray-500 mb-4">
+                {project.video && "▶ Watch Full Demo"}
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {project.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="text-xs px-2 py-1 bg-white/10 rounded"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
           ))}
         </div>
       </div>
+
+      {/* 🎬 Modal עם אנימציה */}
+      <AnimatePresence>
+        {selectedVideo && (
+          <motion.div
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedVideo(null)}
+          >
+            <motion.div
+              className="relative w-[90%] max-w-5xl"
+              initial={{ scale: 0.8, opacity: 0, y: 40 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0, y: 40 }}
+              transition={{ duration: 0.3 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close */}
+              <button
+                onClick={() => setSelectedVideo(null)}
+                className="absolute -top-10 right-0 text-white text-2xl"
+              >
+                ✕
+              </button>
+
+              {/* Video */}
+              <iframe
+                src={selectedVideo}
+                className="w-full h-[500px] rounded-xl"
+                allow="autoplay"
+                allowFullScreen
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
