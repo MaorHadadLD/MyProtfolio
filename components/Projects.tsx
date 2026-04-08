@@ -11,7 +11,7 @@ const projects = [
     description:
       "A comprehensive smart hotel management platform. Guests can control room features, request services, and check in/out digitally. Staff manages operations from a real-time dashboard.",
     tags: ["React Native", "Node.js", "Firebase", "IoT"],
-    github: "https://github.com/MaorHadadLD/SHS-SmartHotel",
+    link: "https://github.com/MaorHadadLD/SHS-SmartHotel",
     accent: "#00f5ff",
     icon: "🏨",
     highlights: ["Real-time dashboard", "Digital check-in/out", "IoT integration"],
