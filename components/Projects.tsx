@@ -22,12 +22,28 @@ const projects = [
     name: "Garber Woodworks",
     shortName: "GW",
     description:
-      "Professional homepage for a woodworking business. Clean, conversion-focused design showcasing craftsmanship with portfolio gallery and contact flow.",
+      "Professional homepage for a woodworking business. Clean, conversion-focused design showcasing craftsmanship.",
     tags: ["Next.js", "Tailwind CSS", "React"],
     link: "https://garberwoodworks.com",
     accent: "#a855f7",
     icon: "🪵",
     highlights: ["Business landing page", "Portfolio gallery", "Responsive design"],
+  },
+  {
+    id: 3,
+    name: "Nexus Terminal",
+    shortName: "NT",
+    description:
+      "Interactive terminal-based game experience. A cyber-style interface where users navigate commands and explore a simulated system.",
+    tags: ["Next.js", "Game UI", "Interactive", "Terminal"],
+    link: "https://nexus-terminal-two.vercel.app",
+    accent: "#22c55e",
+    icon: "🧠",
+    highlights: [
+      "Interactive terminal UI",
+      "Command-based gameplay",
+      "Cyberpunk experience",
+    ],
   },
 ];
 
@@ -62,6 +78,7 @@ export default function Projects() {
             </span>
             <div className="h-px flex-1 bg-gradient-to-r from-neon-cyan/30 to-transparent" />
           </div>
+
           <h2 className="text-4xl lg:text-5xl font-bold">
             Things I&apos;ve{" "}
             <span className="text-neon-cyan glow-cyan">built</span>
@@ -76,7 +93,7 @@ export default function Projects() {
               initial={{ opacity: 0, y: 40 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: index * 0.2 }}
-              whileHover={{ y: -4, scale: 1.01 }}
+              whileHover={{ y: -4, scale: 1.02 }}
               className="group card-glass rounded-2xl overflow-hidden cursor-pointer transition-all duration-300"
               style={{
                 borderColor: `${project.accent}15`,
@@ -114,17 +131,26 @@ export default function Projects() {
                   {project.description}
                 </p>
 
-                {/* Demo label */}
+                {/* Labels */}
                 {project.video && (
-                  <div className="text-xs text-neon-cyan mb-4">
+                  <div className="text-xs text-neon-cyan mb-3">
                     ▶ Watch Full Demo
+                  </div>
+                )}
+
+                {!project.video && project.link && (
+                  <div className="text-xs text-green-400 mb-3">
+                    ▶ Live Project
                   </div>
                 )}
 
                 {/* Highlights */}
                 <div className="flex flex-col gap-1.5 mb-5">
                   {project.highlights.map((h) => (
-                    <div key={h} className="flex items-center gap-2 text-xs text-slate-500">
+                    <div
+                      key={h}
+                      className="flex items-center gap-2 text-xs text-slate-500"
+                    >
                       <span style={{ color: project.accent }}>▸</span>
                       {h}
                     </div>
@@ -147,7 +173,7 @@ export default function Projects() {
           ))}
         </div>
 
-        {/* GitHub link נשאר */}
+        {/* GitHub */}
         <div className="mt-10 text-center">
           <a
             href="https://github.com/MaorHadadLD"
