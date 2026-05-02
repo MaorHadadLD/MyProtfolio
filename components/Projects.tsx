@@ -22,7 +22,7 @@ const projects = [
     name: "Garber Woodworks",
     shortName: "GW",
     description:
-      "Professional homepage for a woodworking business. Clean, conversion-focused design showcasing craftsmanship.",
+      "Professional homepage for a woodworking business. Clean, conversion-focused design.",
     tags: ["Next.js", "Tailwind CSS", "React"],
     link: "https://garberwoodworks.com",
     accent: "#a855f7",
@@ -49,7 +49,9 @@ const projects = [
 
 export default function Projects() {
   const ref = useRef(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
+
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
 
   const handleClick = (project: any) => {
@@ -60,60 +62,90 @@ export default function Projects() {
     }
   };
 
+  const scroll = (direction: "left" | "right") => {
+    if (!scrollRef.current) return;
+
+    const { scrollLeft, clientWidth } = scrollRef.current;
+
+    scrollRef.current.scrollTo({
+      left:
+        direction === "left"
+          ? scrollLeft - clientWidth
+          : scrollLeft + clientWidth,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <section id="projects" className="py-24 lg:py-32 relative overflow-hidden">
+      {/* Background */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-24 bg-gradient-to-b from-transparent via-neon-purple/20 to-transparent" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 rounded-full opacity-5 blur-3xl bg-neon-cyan pointer-events-none" />
 
       <div className="max-w-6xl mx-auto px-6" ref={ref}>
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
           className="mb-16"
         >
-          <div className="flex items-center gap-3 mb-4">
-            <span className="font-mono text-xs text-neon-cyan tracking-[0.3em] uppercase">
-              03 / Projects
-            </span>
-            <div className="h-px flex-1 bg-gradient-to-r from-neon-cyan/30 to-transparent" />
-          </div>
-
           <h2 className="text-4xl lg:text-5xl font-bold">
             Things I&apos;ve{" "}
             <span className="text-neon-cyan glow-cyan">built</span>
           </h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {projects.map((project, index) => (
-            <motion.div
-              key={project.id}
-              onClick={() => handleClick(project)}
-              initial={{ opacity: 0, y: 40 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: index * 0.2 }}
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="group card-glass rounded-2xl overflow-hidden cursor-pointer transition-all duration-300"
-              style={{
-                borderColor: `${project.accent}15`,
-              }}
-            >
-              {/* Accent bar */}
-              <div
-                className="h-1 w-full"
-                style={{
-                  background: `linear-gradient(90deg, ${project.accent}60, transparent)`,
-                }}
-              />
+        {/* 🔥 Slider */}
+        <div className="relative">
 
-              <div className="p-6 lg:p-8">
-                {/* Header */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
+          {/* Buttons */}
+          <button
+            onClick={() => scroll("left")}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/40 backdrop-blur px-3 py-2 rounded-full text-white hover:bg-black/70"
+          >
+            ←
+          </button>
+
+          <button
+            onClick={() => scroll("right")}
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/40 backdrop-blur px-3 py-2 rounded-full text-white hover:bg-black/70"
+          >
+            →
+          </button>
+
+          <motion.div
+            ref={scrollRef}
+            className="flex gap-6 overflow-x-auto pb-10 snap-x snap-mandatory scrollbar-hide cursor-grab active:cursor-grabbing px-10"
+            drag="x"
+            dragConstraints={{ left: -1000, right: 0 }}
+          >
+            {projects.map((project, index) => (
+              <motion.div
+                key={project.id}
+                onClick={() => handleClick(project)}
+                initial={{ opacity: 0, y: 40 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+                whileHover={{ scale: 1.08, y: -10 }}
+                className="snap-center min-w-[320px] md:min-w-[420px] max-w-[420px] group card-glass rounded-2xl overflow-hidden cursor-pointer transition-all duration-300"
+                style={{
+                  borderColor: `${project.accent}15`,
+                  filter: "brightness(0.9)",
+                }}
+              >
+                {/* Accent bar */}
+                <div
+                  className="h-1 w-full"
+                  style={{
+                    background: `linear-gradient(90deg, ${project.accent}60, transparent)`,
+                  }}
+                />
+
+                <div className="p-6 lg:p-8">
+                  <div className="flex items-center gap-3 mb-4">
                     <span className="text-3xl">{project.icon}</span>
                     <div>
-                      <h3 className="text-lg font-bold text-slate-100 group-hover:text-white transition-colors">
+                      <h3 className="text-lg font-bold text-slate-100">
                         {project.name}
                       </h3>
                       <span
@@ -124,64 +156,45 @@ export default function Projects() {
                       </span>
                     </div>
                   </div>
-                </div>
 
-                {/* Description */}
-                <p className="text-slate-400 text-sm leading-relaxed mb-5">
-                  {project.description}
-                </p>
+                  <p className="text-slate-400 text-sm mb-5">
+                    {project.description}
+                  </p>
 
-                {/* Labels */}
-                {project.video && (
-                  <div className="text-xs text-neon-cyan mb-3">
-                    ▶ Watch Full Demo
-                  </div>
-                )}
-
-                {!project.video && project.link && (
-                  <div className="text-xs text-green-400 mb-3">
-                    ▶ Live Project
-                  </div>
-                )}
-
-                {/* Highlights */}
-                <div className="flex flex-col gap-1.5 mb-5">
-                  {project.highlights.map((h) => (
-                    <div
-                      key={h}
-                      className="flex items-center gap-2 text-xs text-slate-500"
-                    >
-                      <span style={{ color: project.accent }}>▸</span>
-                      {h}
+                  {project.video && (
+                    <div className="text-xs text-neon-cyan mb-3">
+                      ▶ Watch Demo
                     </div>
-                  ))}
-                </div>
+                  )}
 
-                {/* Tags */}
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-xs px-2.5 py-1 rounded-md font-mono text-slate-500 border border-white/5 bg-white/3"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+                  {!project.video && project.link && (
+                    <div className="text-xs text-green-400 mb-3">
+                      ▶ Live Project
+                    </div>
+                  )}
 
-        {/* GitHub */}
-        <div className="mt-10 text-center">
-          <a
-            href="https://github.com/MaorHadadLD"
-            target="_blank"
-            className="text-sm text-slate-500 hover:text-neon-cyan transition"
-          >
-            More on GitHub →
-          </a>
+                  <div className="flex flex-col gap-1.5 mb-5">
+                    {project.highlights.map((h) => (
+                      <div key={h} className="text-xs text-slate-500">
+                        ▸ {h}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {project.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="text-xs px-2 py-1 bg-white/10 rounded"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </div>
 
@@ -197,15 +210,14 @@ export default function Projects() {
           >
             <motion.div
               className="relative w-[90%] max-w-5xl"
-              initial={{ scale: 0.85, opacity: 0, y: 40 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.85, opacity: 0, y: 40 }}
-              transition={{ duration: 0.3 }}
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.85, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
               <button
-                onClick={() => setSelectedVideo(null)}
                 className="absolute -top-10 right-0 text-white text-2xl"
+                onClick={() => setSelectedVideo(null)}
               >
                 ✕
               </button>
